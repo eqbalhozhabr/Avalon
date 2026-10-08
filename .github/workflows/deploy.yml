@@ -51,7 +51,9 @@ jobs:
           if printf '%s' "$account" | grep -Eq '^[0-9a-f]{32}$'; then echo "account id: looks valid (32 hex)"; else echo "::error::Account ID has length ${#account}, expected 32 hex chars"; fi
           if [ "${#token}" -ne 40 ] || [ "$bad_chars" -ne 0 ]; then echo "::error::Token does not look like a Cloudflare API token. Re-create the secret with only the token."; exit 1; fi
 
+      # Informational only: deploys use CLOUDFLARE_ACCOUNT_ID directly and do not need to list accounts.
       - name: Check Cloudflare credentials
+        continue-on-error: true
         run: npx wrangler whoami
 
       # 1) Rooms: the Worker that owns the GameRoom Durable Object.
