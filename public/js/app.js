@@ -786,6 +786,8 @@ function helpTab() {
     h('ul', {}, h('li', {}, 'خوبان باید ۳ ماموریت را موفق کنند.'), h('li', {}, 'اشرار باید ۳ ماموریت را خراب کنند، یا ۵ پیشنهاد تیم پشت‌سرهم رد شود، یا آساسین مرلین را حدس بزند.')),
     h('h3', {}, 'هر دور'),
     h('ul', {}, h('li', {}, 'رهبر تیم پیشنهاد می‌دهد.'), h('li', {}, 'همه هم‌زمان قبول/رد می‌کنند. اگر مساوی شد یا اکثریت رد کرد، تیم رد می‌شود.'), h('li', {}, 'اعضای تیم کارت مخفی بازی می‌کنند. خوبان فقط «موفقیت»، اشرار هر دو. یک کارت شکست برای شکست ماموریت کافی است (ماموریت ۴ با ۷ نفر و بیشتر: دو کارت).')),
+    h('h3', {}, 'درباره‌ی این پروژه'),
+    h('p', { dir: 'ltr', style: 'text-align:left' }, 'You can view the original game at ', h('a', { href: 'https://boardgamegeek.com/boardgame/128882/the-resistance-avalon', target: '_blank', rel: 'noopener noreferrer', style: 'color:var(--gold2)' }, 'BoardGameGeek'), '. Disclaimer: This is a non-profit project made by two friends out of pure love for the original game. The project is not affiliated with any of the official publishers of the original game in any way.'),
     h('h3', {}, 'اگر گوشی خاموش شد'),
     h('ul', {}, h('li', {}, 'صفحه را دوباره باز کن؛ خودکار به همان صندلی و نقش برمی‌گردی.'), h('li', {}, 'میز منتظر نمی‌ماند: بازیکن آفلاین بعد از چند ثانیه حرکت پیش‌فرض (رأی قبول / کارت موفقیت) می‌گیرد و میزبان هم می‌تواند به‌جایش بازی کند.'), h('li', {}, 'گزینه‌ی «روشن نگه داشتن صفحه» از خاموش‌شدن صفحه جلوگیری می‌کند.')),
   ];

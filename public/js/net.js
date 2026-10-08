@@ -32,8 +32,12 @@ export function clearCreds(code) {
   }
 }
 
+// The game may live under a sub-path (e.g. https://luckylion.games/avalon/), so by default the API
+// is resolved relative to the page's own directory instead of the site root.
 export function apiBase() {
-  return (window.AVALON && window.AVALON.apiBase) || location.origin;
+  const configured = window.AVALON && window.AVALON.apiBase;
+  if (configured) return configured.replace(/\/$/, '');
+  return new URL('.', location.href).href.replace(/\/$/, '');
 }
 
 export async function createRoom() {

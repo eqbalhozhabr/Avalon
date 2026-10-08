@@ -20,6 +20,7 @@
 ## ساختار
 
 ```
+proxy/             Worker پروکسی برای luckylion.games/avalon
 public/            کلاینت استاتیک (Pages)  — index.html، css، js/table3d.js (رندر میز)، js/app.js، js/net.js
 functions/         Pages Functions: فقط /api/rooms و /ws/:code را به Durable Object می‌فرستند
 worker/            Worker جدا که کلاس GameRoom (Durable Object) در آن است
@@ -52,7 +53,13 @@ Pages خودش نمی‌تواند Durable Object تعریف کند، پس دو 
    - Build command: خالی — Output directory: `public`
    - **Binding:** `wrangler.toml` ریشه، `GAME_ROOM` را به Worker بالا وصل می‌کند. اگر Pages آن را نخواند: Dashboard → پروژه‌ی Pages → Settings → Functions → *Durable Object bindings* → Variable name `GAME_ROOM`، Class `GameRoom`، Worker `avalon-rooms` (برای Production و Preview). بعد دوباره Deploy کن.
 3. **حالت جایگزین (بدون binding):** آدرس Worker را در `public/config.js` به‌صورت `apiBase: 'https://avalon-rooms.<subdomain>.workers.dev'` بگذار؛ کلاینت مستقیم به Worker وصل می‌شود.
-4. برای دامنه‌ی شرکت: در Pages یک Custom domain مثل `avalon.example.com` اضافه کن.
+4. **مسیر `luckylion.games/avalon`:** Worker کوچک `proxy/` درخواست‌های `luckylion.games/avalon*` را به Pages می‌رساند (مسیر `/avalon` را برمی‌دارد، WebSocket را عبور می‌دهد، و هدر `noindex` را هم می‌گذارد). کلاینت همه‌ی آدرس‌ها را نسبت به خود صفحه می‌سازد، پس هم در ریشه و هم زیر `/avalon/` کار می‌کند.
+   - در `proxy/wrangler.toml` مقدار `ORIGIN` را برابر آدرس `*.pages.dev` پروژه‌ی Pages بگذار.
+   - `npm run deploy:proxy`
+   - شرط: دامنه‌ی `luckylion.games` باید zone همان اکانت کلودفلر باشد.
+
+## noindex
+متا تگ `robots` در `public/index.html`، هدر `X-Robots-Tag` در `public/_headers` (Pages) و در `proxy/index.js` همگی `noindex, nofollow` هستند. عمداً `robots.txt` با Disallow نگذاشتیم، چون خزنده‌ها اگر اجازه‌ی دیدن صفحه را نداشته باشند، noindex را هم نمی‌بینند. وقتی خواستی عمومی شود، این سه مورد را بردار.
 
 > یادداشت: سقف روزانه‌ی پلن رایگان Durable Objects را در داشبورد کلاودفلر ببین؛ بازی ۵–۱۰ نفره در حد چند هزار پیام است و اتاق‌های بیکار hibernate می‌شوند. اتاق‌های رها شده بعد از ۲۴ ساعت پاک می‌شوند.
 

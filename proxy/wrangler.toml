@@ -1,0 +1,10 @@
+# Route https://luckylion.games/avalon* to the Pages project.
+# luckylion.games must be a zone in the same Cloudflare account.
+name = "avalon-proxy"
+main = "index.js"
+compatibility_date = "2025-09-01"
+routes = [{ pattern = "luckylion.games/avalon*", zone_name = "luckylion.games" }]
+
+[vars]
+# The *.pages.dev address of the Pages project (see `wrangler pages project list`).
+ORIGIN = "https://avalon.pages.dev"

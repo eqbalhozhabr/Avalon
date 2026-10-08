@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Avalon (The Resistance) online — Cloudflare Pages + Durable Objects",
+  "description": "Avalon (The Resistance) online \u2014 Cloudflare Pages + Durable Objects",
   "scripts": {
     "test": "node --test \"test/*.test.js\"",
     "dev:worker": "wrangler dev --config worker/wrangler.toml --port 8788",
     "dev:pages": "wrangler pages dev public --port 8787 --do GAME_ROOM=GameRoom@avalon-rooms",
     "deploy:worker": "wrangler deploy --config worker/wrangler.toml",
-    "deploy:pages": "wrangler pages deploy public --project-name avalon"
+    "deploy:pages": "wrangler pages deploy public --project-name avalon",
+    "deploy:proxy": "wrangler deploy --config proxy/wrangler.toml",
+    "dev:proxy": "wrangler dev --config proxy/wrangler.toml --port 8789 --var ORIGIN:http://127.0.0.1:8787"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
