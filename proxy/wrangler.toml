@@ -7,4 +7,4 @@ routes = [{ pattern = "luckylion.games/avalon*", zone_name = "luckylion.games" }
 
 [vars]
 # The *.pages.dev address of the Pages project (see `wrangler pages project list`).
-ORIGIN = "https://avalon.pages.dev"
+ORIGIN = "https://avalon-dli.pages.dev"

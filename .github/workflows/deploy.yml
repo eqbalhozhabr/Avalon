@@ -72,8 +72,7 @@ jobs:
       - name: Deploy Pages
         run: npx wrangler pages deploy public --project-name avalon --branch main --commit-dirty=true
 
-      # 3) /avalon path proxy. Only runs once the repository variable PAGES_ORIGIN is set
-      #    to the project's *.pages.dev address (see README).
+      # 3) /avalon path proxy: luckylion.games/avalon* -> the Pages project.
+      #    Override the target with the repository variable PAGES_ORIGIN if the project is ever renamed.
       - name: Deploy /avalon proxy
-        if: ${{ vars.PAGES_ORIGIN != '' }}
-        run: npx wrangler deploy --config proxy/wrangler.toml --var ORIGIN:${{ vars.PAGES_ORIGIN }}
+        run: npx wrangler deploy --config proxy/wrangler.toml --var ORIGIN:${{ vars.PAGES_ORIGIN || 'https://avalon-dli.pages.dev' }}
