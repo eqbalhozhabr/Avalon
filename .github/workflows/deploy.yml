@@ -35,8 +35,10 @@ jobs:
         run: |
           token="$(printf '%s' "$RAW_CF_TOKEN" | tr -d '[:space:]')"
           account="$(printf '%s' "$RAW_CF_ACCOUNT" | tr -d '[:space:]')"
-          if printf '%s' "$token" | grep -qE 'Bearer[A-Za-z0-9_-]{40}'; then
-            token="$(printf '%s' "$token" | sed -E 's/.*Bearer([A-Za-z0-9_-]{40}).*/\1/')"
+          # If the secret holds the whole `curl ... -H "Authorization: Bearer <token>"` line, keep only the
+          # token: everything after "Bearer" up to the closing quote (the character set excludes quotes).
+          if printf '%s' "$token" | grep -qE 'Bearer[A-Za-z0-9_-]+'; then
+            token="$(printf '%s' "$token" | sed -E 's/.*Bearer([A-Za-z0-9_-]+).*/\1/')"
             echo "note: the token secret contained a pasted curl command; extracted the token from it (please store only the token)"
           fi
           echo "::add-mask::$token"
@@ -45,11 +47,15 @@ jobs:
           echo "CLOUDFLARE_ACCOUNT_ID=$account" >> "$GITHUB_ENV"
           [ -n "$token" ] && [ -n "$account" ] || { echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secret is empty"; exit 1; }
 
-          # Shape check only. API tokens are 40 chars of [A-Za-z0-9_-]; account IDs are 32 hex chars.
+          # Shape check only (values are never printed). Cloudflare tokens come in two forms:
+          #   legacy: 40 chars of [A-Za-z0-9_-]
+          #   current: a prefix like cfut_/cfat_ + 40 chars + 8-char checksum = 53 chars
           bad_chars="$(printf '%s' "$token" | tr -d 'A-Za-z0-9_-' | wc -c)"
-          echo "token: length=${#token} (expected 40), characters outside [A-Za-z0-9_-]: ${bad_chars}"
-          if printf '%s' "$account" | grep -Eq '^[0-9a-f]{32}$'; then echo "account id: looks valid (32 hex)"; else echo "::error::Account ID has length ${#account}, expected 32 hex chars"; fi
-          if [ "${#token}" -ne 40 ] || [ "$bad_chars" -ne 0 ]; then echo "::error::Token does not look like a Cloudflare API token. Re-create the secret with only the token."; exit 1; fi
+          echo "token: length=${#token}, characters outside [A-Za-z0-9_-]: ${bad_chars}"
+          if printf '%s' "$token" | grep -Eq '^cf[a-z]{2}_[A-Za-z0-9]{48}$'; then echo "token format: current (prefixed)";
+          elif printf '%s' "$token" | grep -Eq '^[A-Za-z0-9_-]{40}$'; then echo "token format: legacy (40 chars)";
+          else echo "::error::Token does not look like a Cloudflare API token (expected cfXX_ + 48 chars, or 40 chars). Re-create the secret with only the token."; exit 1; fi
+          if printf '%s' "$account" | grep -Eq '^[0-9a-f]{32}$'; then echo "account id: looks valid (32 hex)"; else echo "::error::Account ID has length ${#account}, expected 32 hex chars"; exit 1; fi
 
       # Informational only: deploys use CLOUDFLARE_ACCOUNT_ID directly and do not need to list accounts.
       - name: Check Cloudflare credentials
