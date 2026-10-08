@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#120d1c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>آوالون آنلاین</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Crect width='8' height='8' fill='%23120d1c'/%3E%3Crect x='1' y='2' width='6' height='1' fill='%23ffd23f'/%3E%3Crect x='1' y='3' width='6' height='3' fill='%23c9a24a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <!-- ============ home ============ -->
+  <main id="home" class="screen">
+    <div class="logo">
+      <div class="logo-title">آوالون</div>
+      <div class="logo-sub">مقاومت · بازی آنلاین دور میز</div>
+    </div>
+    <div class="card">
+      <label class="field">نام شما
+        <input id="name" maxlength="16" autocomplete="nickname" placeholder="مثلاً علی">
+      </label>
+      <button id="btn-create" class="btn primary big">ساخت اتاق جدید</button>
+      <div class="or">یا</div>
+      <label class="field">کد اتاق
+        <input id="code" maxlength="4" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABCD" dir="ltr" class="code-input">
+      </label>
+      <button id="btn-join" class="btn big">ورود به اتاق</button>
+      <p id="home-err" class="err"></p>
+    </div>
+    <p class="hint">برای ۵ تا ۱۰ نفر. هر نفر با گوشی خودش وارد می‌شود؛ اگر صفحه‌ی گوشی خاموش شد، با روشن‌شدن دوباره به همان صندلی برمی‌گردد و بازی منتظر نمی‌ماند.</p>
+  </main>
+
+  <!-- ============ room ============ -->
+  <main id="room" class="screen hidden">
+    <header id="hud">
+      <button id="btn-menu" class="icon-btn" aria-label="منو">☰</button>
+      <div id="quests" class="quests"></div>
+      <div id="rejects" class="rejects" title="رد شدن‌های پشت‌سرهم"></div>
+      <div id="net" class="net" title="وضعیت اتصال"></div>
+    </header>
+
+    <div id="stage">
+      <canvas id="table"></canvas>
+      <div id="seats"></div>
+      <div id="banner" class="banner hidden"></div>
+      <div id="toasts"></div>
+    </div>
+
+    <section id="panel"></section>
+  </main>
+
+  <!-- ============ bottom sheet ============ -->
+  <div id="sheet-bg" class="hidden"></div>
+  <aside id="sheet" class="hidden">
+    <div class="tabs">
+      <button data-tab="role" class="tab">نقش من</button>
+      <button data-tab="history" class="tab">تاریخچه</button>
+      <button data-tab="help" class="tab">راهنما</button>
+      <button data-tab="settings" class="tab">تنظیمات</button>
+      <button id="sheet-close" class="tab close">✕</button>
+    </div>
+    <div id="sheet-body"></div>
+  </aside>
+
+  <!-- ============ overlays ============ -->
+  <div id="offline" class="overlay hidden">
+    <div class="overlay-card">
+      <div class="spinner"></div>
+      <div>اتصال قطع شد؛ در حال برگشتن به میز…</div>
+    </div>
+  </div>
+  <div id="fatal" class="overlay hidden">
+    <div class="overlay-card">
+      <h2 id="fatal-title"></h2>
+      <p id="fatal-text"></p>
+      <button id="fatal-btn" class="btn primary">بازگشت</button>
+      <button id="fatal-retry" class="btn hidden">بازگرفتن میز در این صفحه</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

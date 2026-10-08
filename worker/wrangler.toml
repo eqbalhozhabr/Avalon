@@ -1,0 +1,14 @@
+# The Durable Object class must live in a Worker (Pages cannot define one).
+# Pages Functions bind to this Worker by name — see ../wrangler.toml.
+name = "avalon-rooms"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+[[durable_objects.bindings]]
+name = "GAME_ROOM"
+class_name = "GameRoom"
+
+# SQLite-backed Durable Objects are the ones available on the Workers Free plan.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GameRoom"]

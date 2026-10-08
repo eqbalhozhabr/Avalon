@@ -1,0 +1,13 @@
+# Cloudflare Pages project (static game client + thin proxy Functions).
+name = "avalon"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-09-01"
+
+# Rooms live in the "avalon-rooms" Worker (see worker/). Pages Functions only
+# forward requests to it. If your Pages setup ignores this block, add the same
+# binding in the dashboard: Settings -> Functions -> Durable Object bindings
+#   Variable name: GAME_ROOM   Class: GameRoom   Worker: avalon-rooms
+[[durable_objects.bindings]]
+name = "GAME_ROOM"
+class_name = "GameRoom"
+script_name = "avalon-rooms"
