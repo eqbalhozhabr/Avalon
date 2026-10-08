@@ -1,0 +1,47 @@
+name: Deploy to Cloudflare
+
+# Runs on every push to the default branch and can be started by hand from the Actions tab.
+# Needs two repository secrets: CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
+on:
+  push:
+    branches: [main, master, claude/admiring-shannon-32kak0]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+      - name: Check Cloudflare credentials
+        run: npx wrangler whoami
+
+      # 1) Rooms: the Worker that owns the GameRoom Durable Object.
+      - name: Deploy rooms Worker
+        run: npx wrangler deploy --config worker/wrangler.toml
+
+      # 2) Game site on Pages (created on first run).
+      - name: Create Pages project if missing
+        run: npx wrangler pages project create avalon --production-branch main || true
+      - name: Deploy Pages
+        run: npx wrangler pages deploy public --project-name avalon --branch main --commit-dirty=true
+
+      # 3) /avalon path proxy. Only runs once the repository variable PAGES_ORIGIN is set
+      #    to the project's *.pages.dev address (see README).
+      - name: Deploy /avalon proxy
+        if: ${{ vars.PAGES_ORIGIN != '' }}
+        run: npx wrangler deploy --config proxy/wrangler.toml --var ORIGIN:${{ vars.PAGES_ORIGIN }}
