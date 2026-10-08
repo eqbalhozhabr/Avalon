@@ -39,6 +39,16 @@ jobs:
           echo "CLOUDFLARE_ACCOUNT_ID=$account" >> "$GITHUB_ENV"
           [ -n "$token" ] && [ -n "$account" ] || { echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secret is empty"; exit 1; }
 
+          # Shape check only (never prints the values). API tokens are 40 chars of [A-Za-z0-9_-];
+          # account IDs are 32 hex chars.
+          bad_chars="$(printf '%s' "$token" | tr -d 'A-Za-z0-9_-' | wc -c)"
+          echo "token: length=${#token} (expected 40), characters outside [A-Za-z0-9_-]: ${bad_chars}"
+          case "$token" in Bearer*|bearer*) echo "::error::Token starts with 'Bearer' - paste only the token itself";; esac
+          case "$token" in *=*) echo "::error::Token contains '=' - did you paste 'NAME=value'?";; esac
+          case "$token" in \"*|\'*) echo "::error::Token is wrapped in quotes - remove them";; esac
+          if printf '%s' "$account" | grep -Eq '^[0-9a-f]{32}$'; then echo "account id: looks valid (32 hex)"; else echo "::error::Account ID has length ${#account}, expected 32 hex chars"; fi
+          if [ "${#token}" -ne 40 ] || [ "$bad_chars" -ne 0 ]; then echo "::warning::Token does not look like a Cloudflare API token (40 chars, letters/digits/_/-). Re-create the secret."; fi
+
       - name: Check Cloudflare credentials
         run: npx wrangler whoami
 
